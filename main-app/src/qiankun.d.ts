@@ -8,9 +8,27 @@ declare module "qiankun" {
     loader?: (loading: boolean) => void;
   }
 
+  export interface LoadableApp<T = any> {
+    name: string;
+    entry: string;
+    container: string | HTMLElement;
+    props?: object | ((props: object) => Promise<any>);
+  }
+
+  export interface MicroApp {
+    mount: () => Promise<any>;
+    unmount: () => Promise<any>;
+    update: (customProps: any) => Promise<any>;
+    getStatus: () => string;
+    loadPromise: Promise<any>;
+    bootstrapPromise: Promise<any>;
+    mountPromise: Promise<any>;
+    unmountPromise: Promise<any>;
+  }
+
   export function registerMicroApps<T = any>(apps: Array<RegistrableApp<T>>, lifeCycles?: LifeCycles<T>): void;
 
-  export function loadMicroApp<T = any>(app: RegistrableApp<T>, configuration?: Configuration): any;
+  export function loadMicroApp<T = any>(app: LoadableApp<T>, configuration?: Configuration): MicroApp;
 
   export function start(options?: {
     prefetch?: boolean | "all" | string[];

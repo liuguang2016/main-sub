@@ -1,30 +1,63 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router';
-import { registerApps } from './micro-app';
+import router, { setMicroActions } from "./router";
 import i18n from "./i18n";
-import { initGlobalState } from "qiankun";
+// 移除已被弃用的initGlobalState
+import { MicroAppStateActions } from "qiankun";
+import { initQiankun } from "./micro-app";
 import { getLang } from "./i18n";
 
-// 创建微应用间通信的全局状态
-const actions = initGlobalState({
-  language: getLang(), // 初始语言状态
-});
-
-// 监听全局状态变化
-actions.onGlobalStateChange((state: Record<string, any>, prev: Record<string, any>) => {
-  console.log("[主应用] 全局状态变更:", state, prev);
-});
-
-// 创建Vue应用
+// 创建Vue应用实例
 const app = createApp(App);
-// 提供全局状态给子组件使用
-app.provide('qiankunGlobalActions', actions);
-// 使用路由和i18n
+
+// 初始化全局状态 - 不再使用qiankun的initGlobalState
+const initialState = { lang: getLang() };
+
+// 定义全局状态和回调
+let globalState = initialState;
+const callbacks: Array<(state: Record<string, any>, prevState: Record<string, any>) => void> = [];
+
+// 创建一个自定义的MicroAppStateActions对象
+const customGlobalState: MicroAppStateActions = {
+  onGlobalStateChange(callback, fireImmediately) {
+    callbacks.push(callback);
+    if (fireImmediately) {
+      callback(globalState, globalState);
+    }
+  },
+
+  setGlobalState(state) {
+    const prevState = { ...globalState };
+    globalState = { ...globalState, ...state };
+    callbacks.forEach((callback) => callback(globalState, prevState));
+    return true;
+  },
+
+  offGlobalStateChange() {
+    callbacks.length = 0;
+    return true;
+  },
+};
+
+// 监听全局状态变更
+customGlobalState.onGlobalStateChange((state, prev) => {
+  console.log("[主应用] 全局状态变更:");
+  console.log("变更前:", prev);
+  console.log("变更后:", state);
+});
+
+// 将全局状态操作对象传递给路由模块
+setMicroActions(customGlobalState);
+
+// 为整个应用提供全局状态管理对象
+app.provide("qiankunGlobalActions", customGlobalState);
+
+// 使用router和i18n
 app.use(router);
 app.use(i18n);
-// 挂载应用
-app.mount('#app');
 
-// 注册并启动微应用
-registerApps(actions); 
+// 挂载应用
+app.mount("#app");
+
+// 初始化qiankun环境
+initQiankun(); 

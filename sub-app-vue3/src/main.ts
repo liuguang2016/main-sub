@@ -11,6 +11,12 @@ let instance: any = null;
 function render(props: QiankunProps = {}) {
   const { container, actions } = props;
 
+  // 清理可能存在的旧实例
+  if (instance) {
+    instance.unmount();
+    instance = null;
+  }
+
   // 创建Vue应用实例
   instance = createApp(App);
 
@@ -34,7 +40,23 @@ function render(props: QiankunProps = {}) {
     }, true);
   }
 
+  // 确定挂载点
+  const mountElement = container ? container.querySelector("#app") : document.querySelector("#app");
+
+  if (!mountElement) {
+    console.error("[Vue3子应用] 找不到挂载点，创建临时挂载点");
+    // 如果不存在挂载点，创建一个
+    const el = document.createElement("div");
+    el.id = "app";
+    if (container) {
+      container.appendChild(el);
+    } else {
+      document.body.appendChild(el);
+    }
+  }
+
   // 挂载应用
+  console.log("[Vue3子应用] 正在挂载到", container ? "qiankun容器" : "独立运行模式");
   instance.mount(container ? container.querySelector("#app") : "#app");
 }
 

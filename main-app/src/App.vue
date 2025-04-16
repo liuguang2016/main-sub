@@ -7,10 +7,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject, provide } from 'vue';
+import { MicroAppStateActions } from 'qiankun';
 
 export default defineComponent({
   name: 'App',
+  setup() {
+    // 这个inject是从应用实例中注入的customGlobalState
+    const actions = inject<MicroAppStateActions>('qiankunGlobalActions');
+
+    // 再次提供给组件树，让子组件能够注入它
+    if (actions) {
+      provide('qiankunGlobalActions', actions);
+    }
+  }
 });
 </script>
 

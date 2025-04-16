@@ -1,24 +1,24 @@
 <template>
   <div class="layout">
     <header class="header">
-      <h1 class="logo">{{ $t('home.welcome') }}</h1>
+      <h1 class="logo">{{ t('home.welcome') }}</h1>
       <nav class="nav">
-        <router-link to="/" class="nav-link">{{ $t('nav.home') }}</router-link>
-        <router-link to="/vue3" class="nav-link">{{ $t('nav.vue3App') }}</router-link>
-        <router-link to="/vue2" class="nav-link">{{ $t('nav.vue2App') }}</router-link>
+        <router-link to="/" class="nav-link">{{ t('nav.home') }}</router-link>
+        <router-link to="/vue3" class="nav-link">{{ t('nav.vue3App') }}</router-link>
+        <router-link to="/vue2" class="nav-link">{{ t('nav.vue2App') }}</router-link>
       </nav>
       <div class="lang-switch">
         <button 
           @click="changeLang('zh')" 
           :class="{ active: currentLang === 'zh' }"
         >
-          {{ $t('language.zh') }}
+          {{ t('language.zh') }}
         </button>
         <button 
           @click="changeLang('en')" 
           :class="{ active: currentLang === 'en' }"
         >
-          {{ $t('language.en') }}
+          {{ t('language.en') }}
         </button>
       </div>
     </header>
@@ -26,7 +26,7 @@
       <router-view />
     </main>
     <footer class="footer">
-      <p>{{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
+      <p>{{ t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
     </footer>
   </div>
 </template>
@@ -35,16 +35,16 @@
 import { defineComponent, ref, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getLang, setLang } from '../i18n';
-import { initGlobalState } from 'qiankun';
+import { MicroAppStateActions } from 'qiankun';
 
 export default defineComponent({
   name: 'LayoutComponent',
   setup() {
-    const { locale } = useI18n();
+    const { locale, t } = useI18n();
     const currentLang = ref(getLang());
     
-    // 获取全局状态管理实例
-    const actions = inject('qiankunGlobalActions') as ReturnType<typeof initGlobalState>;
+    // 获取全局状态管理实例，添加默认值避免警告
+    const actions = inject<MicroAppStateActions | null>('qiankunGlobalActions', null);
     
     const changeLang = (lang: string) => {
       // 修改i18n当前语言
@@ -61,7 +61,8 @@ export default defineComponent({
     
     return {
       currentLang,
-      changeLang
+      changeLang,
+      t
     };
   }
 });
