@@ -1,0 +1,73 @@
+# 依赖管理
+node_modules
+.pnpm-store
+.pnpm-debug.log
+
+# 构建产物
+dist
+dist-ssr
+build
+lib
+coverage
+*.local
+
+# 日志文件
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 编辑器/IDE目录
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+*.sublime-workspace
+
+# 本地环境变量
+.env
+.env.local
+.env.*.local
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 测试覆盖率报告
+coverage
+
+# 临时文件
+*.tmp
+*.bak
+*.swp
+*~.nib
+.cache
+.temp
+temp
+
+# Vue CLI 生成的文件
+.DS_Store
+/dist
+/.history
+
+# Vite生成的文件
+*.timestamp-*
+
+# 类型声明文件生成目录
+types/auto-imports.d.ts
+types/components.d.ts
+
+# 其他
+.history
+*.zip
+*.tgz 
