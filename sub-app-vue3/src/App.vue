@@ -1,8 +1,10 @@
 <template>
   <div class="app-container">
-    <keep-alive>
-      <router-view :key="currentLang" />
-    </keep-alive>
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" :key="currentLang" />
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 

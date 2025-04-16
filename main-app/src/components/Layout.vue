@@ -7,23 +7,14 @@
         <router-link to="/vue3" class="nav-link">{{ t('nav.vue3App') }}</router-link>
         <router-link to="/vue2" class="nav-link">{{ t('nav.vue2App') }}</router-link>
       </nav>
-      <div class="lang-switch">
-        <button 
-          @click="changeLang('zh')" 
-          :class="{ active: currentLang === 'zh' }"
-        >
-          {{ t('language.zh') }}
-        </button>
-        <button 
-          @click="changeLang('en')" 
-          :class="{ active: currentLang === 'en' }"
-        >
-          {{ t('language.en') }}
-        </button>
-      </div>
+      <language-switcher />
     </header>
     <main class="main">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
     </main>
     <footer class="footer">
       <p>{{ t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
@@ -32,36 +23,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, inject } from 'vue';
+import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getLang, setLang } from '../i18n';
-import { MicroAppStateActions } from 'qiankun';
+import LanguageSwitcher from './LanguageSwitcher.vue';
 
 export default defineComponent({
   name: 'LayoutComponent',
+  components: {
+    LanguageSwitcher
+  },
   setup() {
-    const { locale, t } = useI18n();
-    const currentLang = ref(getLang());
-    
-    // 获取全局状态管理实例，添加默认值避免警告
-    const actions = inject<MicroAppStateActions | null>('qiankunGlobalActions', null);
-    
-    const changeLang = (lang: string) => {
-      // 修改i18n当前语言
-      locale.value = lang;
-      // 保存语言设置
-      setLang(lang);
-      currentLang.value = lang;
-      
-      // 设置全局状态，通知子应用
-      if (actions) {
-        actions.setGlobalState({ lang });
-      }
-    };
+    const { t } = useI18n();
     
     return {
-      currentLang,
-      changeLang,
       t
     };
   }
@@ -117,25 +91,5 @@ export default defineComponent({
   padding: 1rem;
   text-align: center;
   color: #666;
-}
-
-.lang-switch {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.lang-switch button {
-  background: transparent;
-  color: white;
-  border: 1px solid white;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.lang-switch button.active {
-  background-color: white;
-  color: #2c3e50;
 }
 </style>
