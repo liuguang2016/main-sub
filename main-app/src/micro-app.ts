@@ -1,16 +1,4 @@
-import { registerMicroApps, start, loadMicroApp, MicroApp, RegistrableApp, MicroAppStateActions } from "qiankun";
-
-// 扩展Configuration类型，添加props属性
-interface ExtendedConfiguration {
-  singular?: boolean;
-  sandbox?: {
-    experimentalStyleIsolation?: boolean;
-  };
-  props?: {
-    actions?: MicroAppStateActions;
-    [key: string]: any;
-  };
-}
+import { start, loadMicroApp, MicroApp, RegistrableApp, MicroAppStateActions } from "qiankun";
 
 // 微应用配置列表
 export const microApps: RegistrableApp[] = [
