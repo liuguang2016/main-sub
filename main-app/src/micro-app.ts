@@ -1,5 +1,17 @@
 import { registerMicroApps, start, loadMicroApp, MicroApp, RegistrableApp, MicroAppStateActions } from "qiankun";
 
+// 扩展Configuration类型，添加props属性
+interface ExtendedConfiguration {
+  singular?: boolean;
+  sandbox?: {
+    experimentalStyleIsolation?: boolean;
+  };
+  props?: {
+    actions?: MicroAppStateActions;
+    [key: string]: any;
+  };
+}
+
 // 微应用配置列表
 export const microApps: RegistrableApp[] = [
   {
@@ -81,8 +93,34 @@ export function unloadMicroApp(name: string): Promise<void> {
 
 // 为了兼容router/index.ts中的导入，添加loadApp和unloadApp函数作为loadMicroAppByName和unloadMicroApp的封装
 export function loadApp(name: string, actions: MicroAppStateActions): Promise<MicroApp | null> {
-  console.log(`[主应用] 正在加载微应用 ${name}，并传递全局状态`);
-  return loadMicroAppByName(name);
+  console.log(`[主应用] 正在加载微应用 ${name}，并传递全局状态`, actions);
+  const app = microApps.find((app) => app.name === name);
+
+  if (!app) {
+    console.error(`[主应用] 未找到名为 ${name} 的微应用配置`);
+    return Promise.resolve(null);
+  }
+
+  try {
+    // 如果已经加载过，则返回缓存的实例
+    if (microAppInstances[name]) {
+      return Promise.resolve(microAppInstances[name]);
+    }
+
+    // 加载微应用并传入全局状态
+    const microApp = loadMicroApp({
+      ...app,
+      props: { actions }, // 确保actions正确传递
+    } as any);
+
+    // 缓存微应用实例
+    microAppInstances[name] = microApp;
+
+    return Promise.resolve(microApp);
+  } catch (error) {
+    console.error(`[主应用] 加载微应用 ${name} 失败:`, error);
+    return Promise.resolve(null);
+  }
 }
 
 export function unloadApp(name: string): Promise<void> {

@@ -1,12 +1,37 @@
 <template>
   <div id="app" class="app-container">
-    <router-view/>
+    <router-view :key="refreshKey"/>
   </div>
 </template>
 
 <script>
+import { getLang } from './i18n';
+
 export default {
-  name: 'App'
+  name: 'App',
+  data() {
+    return {
+      refreshKey: 0,
+      currentLang: getLang()
+    }
+  },
+  created() {
+    // 监听语言变化事件
+    this.$root.$on('language-changed', this.handleLanguageChange);
+    console.log("[Vue2子应用App] 已创建语言变化监听器, 当前语言:", this.currentLang);
+  },
+  beforeDestroy() {
+    // 移除事件监听
+    this.$root.$off('language-changed', this.handleLanguageChange);
+    console.log("[Vue2子应用App] 已移除语言变化监听器");
+  },
+  methods: {
+    handleLanguageChange(lang) {
+      console.log("[Vue2子应用App] 接收到语言变化:", lang);
+      this.currentLang = lang;
+      this.refreshKey++; // 触发视图刷新
+    }
+  }
 }
 </script>
 

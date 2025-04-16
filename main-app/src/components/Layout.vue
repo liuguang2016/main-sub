@@ -55,7 +55,7 @@ export default defineComponent({
       
       // 设置全局状态，通知子应用
       if (actions) {
-        actions.setGlobalState({ language: lang });
+        actions.setGlobalState({ lang });
       }
     };
     

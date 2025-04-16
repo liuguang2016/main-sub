@@ -11,11 +11,19 @@ let instance = null;
 // 渲染函数
 function render(props = {}) {
   const { container, actions } = props;
+  
+  console.log("[Vue2子应用] 接收到props:", props);
+  console.log("[Vue2子应用] actions对象:", actions);
 
   // 创建Vue实例
   instance = new Vue({
     router,
     i18n,
+    data() {
+      return {
+        actions, // 将actions存储在Vue实例中
+      };
+    },
     render: (h) => h(App),
   }).$mount(container ? container.querySelector("#app") : "#app");
 
@@ -25,14 +33,17 @@ function render(props = {}) {
       console.log("[Vue2子应用] 全局状态变更:", state, prev);
 
       // 如果语言发生变化，更新子应用语言
-      if (state.language && state.language !== prev?.language) {
-        console.log("[Vue2子应用] 语言变更为:", state.language);
+      if (state.lang && state.lang !== prev?.lang) {
+        console.log("[Vue2子应用] 语言变更为:", state.lang);
         // 修改i18n语言
-        i18n.locale = state.language;
+        i18n.locale = state.lang;
         // 保存到本地
-        setLang(state.language);
+        setLang(state.lang);
+
+        // 通知Vue实例更新 - 使用根实例作为事件总线
+        instance.$emit("language-changed", state.lang);
       }
-    }, true);
+    }, true); // true表示立即触发一次回调
   }
 }
 
