@@ -43,4 +43,12 @@ declare module "qiankun" {
         };
     fetch?: Function;
   };
+
+  export interface MicroAppStateActions {
+    onGlobalStateChange(callback: (state: Record<string, any>, prevState: Record<string, any>) => void, fireImmediately?: boolean): void;
+    setGlobalState(state: Record<string, any>): boolean;
+    offGlobalStateChange(): boolean;
+  }
+
+  export function initGlobalState(state: Record<string, any>): MicroAppStateActions;
 }

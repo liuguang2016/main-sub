@@ -1,15 +1,15 @@
 <template>
   <div class="home">
-    <h2>欢迎使用微前端示例</h2>
-    <p>这是基于 qiankun 的微前端解决方案示例，主应用使用 Vue 3 + TypeScript 构建。</p>
+    <h2>{{ $t('home.welcome') }}</h2>
+    <p>{{ $t('home.description') }}</p>
     <div class="cards">
       <div class="card" @click="$router.push('/vue3')">
-        <h3>Vue 3 子应用</h3>
-        <p>使用 Vue 3 构建的子应用示例</p>
+        <h3>{{ $t('home.vue3Card.title') }}</h3>
+        <p>{{ $t('home.vue3Card.desc') }}</p>
       </div>
       <div class="card" @click="$router.push('/vue2')">
-        <h3>Vue 2 子应用</h3>
-        <p>使用 Vue 2 构建的子应用示例</p>
+        <h3>{{ $t('home.vue2Card.title') }}</h3>
+        <p>{{ $t('home.vue2Card.desc') }}</p>
       </div>
     </div>
   </div>

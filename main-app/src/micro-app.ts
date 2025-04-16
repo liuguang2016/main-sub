@@ -1,4 +1,4 @@
-import { registerMicroApps, start, RegistrableApp } from 'qiankun';
+import { registerMicroApps, start, RegistrableApp, MicroAppStateActions } from "qiankun";
 
 // 微应用列表
 const microApps: RegistrableApp<any>[] = [
@@ -17,39 +17,47 @@ const microApps: RegistrableApp<any>[] = [
 ];
 
 // 注册微应用
-export const registerApps = () => {
-  registerMicroApps(microApps, {
-    beforeLoad: [
-      (app: RegistrableApp<any>) => {
-        console.log('[主应用] 加载前', app.name);
-        return Promise.resolve();
+export const registerApps = (actions?: MicroAppStateActions) => {
+  registerMicroApps(
+    microApps.map((app) => ({
+      ...app,
+      props: {
+        actions, // 传递给子应用的通信方法
       },
-    ],
-    beforeMount: [
-      (app: RegistrableApp<any>) => {
-        console.log('[主应用] 挂载前', app.name);
-        return Promise.resolve();
-      },
-    ],
-    afterMount: [
-      (app: RegistrableApp<any>) => {
-        console.log('[主应用] 挂载后', app.name);
-        return Promise.resolve();
-      },
-    ],
-    beforeUnmount: [
-      (app: RegistrableApp<any>) => {
-        console.log('[主应用] 卸载前', app.name);
-        return Promise.resolve();
-      },
-    ],
-    afterUnmount: [
-      (app: RegistrableApp<any>) => {
-        console.log('[主应用] 卸载后', app.name);
-        return Promise.resolve();
-      },
-    ],
-  });
+    })),
+    {
+      beforeLoad: [
+        (app: RegistrableApp<any>) => {
+          console.log("[主应用] 加载前", app.name);
+          return Promise.resolve();
+        },
+      ],
+      beforeMount: [
+        (app: RegistrableApp<any>) => {
+          console.log("[主应用] 挂载前", app.name);
+          return Promise.resolve();
+        },
+      ],
+      afterMount: [
+        (app: RegistrableApp<any>) => {
+          console.log("[主应用] 挂载后", app.name);
+          return Promise.resolve();
+        },
+      ],
+      beforeUnmount: [
+        (app: RegistrableApp<any>) => {
+          console.log("[主应用] 卸载前", app.name);
+          return Promise.resolve();
+        },
+      ],
+      afterUnmount: [
+        (app: RegistrableApp<any>) => {
+          console.log("[主应用] 卸载后", app.name);
+          return Promise.resolve();
+        },
+      ],
+    }
+  );
 
   // 启动 qiankun
   start({
@@ -57,4 +65,4 @@ export const registerApps = () => {
       experimentalStyleIsolation: true, // 开启样式隔离
     },
   });
-}; 
+};

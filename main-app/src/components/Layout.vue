@@ -1,27 +1,69 @@
 <template>
   <div class="layout">
     <header class="header">
-      <h1 class="logo">微前端示例</h1>
+      <h1 class="logo">{{ $t('home.welcome') }}</h1>
       <nav class="nav">
-        <router-link to="/" class="nav-link">主页</router-link>
-        <router-link to="/vue3" class="nav-link">Vue3子应用</router-link>
-        <router-link to="/vue2" class="nav-link">Vue2子应用</router-link>
+        <router-link to="/" class="nav-link">{{ $t('nav.home') }}</router-link>
+        <router-link to="/vue3" class="nav-link">{{ $t('nav.vue3App') }}</router-link>
+        <router-link to="/vue2" class="nav-link">{{ $t('nav.vue2App') }}</router-link>
       </nav>
+      <div class="lang-switch">
+        <button 
+          @click="changeLang('zh')" 
+          :class="{ active: currentLang === 'zh' }"
+        >
+          {{ $t('language.zh') }}
+        </button>
+        <button 
+          @click="changeLang('en')" 
+          :class="{ active: currentLang === 'en' }"
+        >
+          {{ $t('language.en') }}
+        </button>
+      </div>
     </header>
     <main class="main">
       <router-view />
     </main>
     <footer class="footer">
-      <p>微前端示例 &copy; {{ new Date().getFullYear() }}</p>
+      <p>{{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
     </footer>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, inject } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { getLang, setLang } from '../i18n';
+import { initGlobalState } from 'qiankun';
 
 export default defineComponent({
   name: 'LayoutComponent',
+  setup() {
+    const { locale } = useI18n();
+    const currentLang = ref(getLang());
+    
+    // 获取全局状态管理实例
+    const actions = inject('qiankunGlobalActions') as ReturnType<typeof initGlobalState>;
+    
+    const changeLang = (lang: string) => {
+      // 修改i18n当前语言
+      locale.value = lang;
+      // 保存语言设置
+      setLang(lang);
+      currentLang.value = lang;
+      
+      // 设置全局状态，通知子应用
+      if (actions) {
+        actions.setGlobalState({ language: lang });
+      }
+    };
+    
+    return {
+      currentLang,
+      changeLang
+    };
+  }
 });
 </script>
 
@@ -74,5 +116,25 @@ export default defineComponent({
   padding: 1rem;
   text-align: center;
   color: #666;
+}
+
+.lang-switch {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-switch button {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.lang-switch button.active {
+  background-color: white;
+  color: #2c3e50;
 }
 </style>

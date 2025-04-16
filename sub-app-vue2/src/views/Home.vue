@@ -1,10 +1,10 @@
 <template>
   <div class="home">
-    <h1>Vue 2 子应用 - 首页</h1>
-    <p>这是使用Vue 2构建的微前端子应用</p>
+    <h1>{{ $t('home.title') }}</h1>
+    <p>{{ $t('home.description') }}</p>
     <div class="navigation">
-      <router-link to="/" class="nav-link">首页</router-link>
-      <router-link to="/about" class="nav-link">关于</router-link>
+      <router-link to="/" class="nav-link">{{ $t('home.nav.home') }}</router-link>
+      <router-link to="/about" class="nav-link">{{ $t('home.nav.about') }}</router-link>
     </div>
   </div>
 </template>
