@@ -3,16 +3,16 @@ import { registerMicroApps, start, RegistrableApp } from 'qiankun';
 // 微应用列表
 const microApps: RegistrableApp<any>[] = [
   {
-    name: 'vue3App',
-    entry: '//localhost:8081',
-    container: '#subapp-container',
-    activeRule: '/vue3',
+    name: "vue3App",
+    entry: "http://localhost:8081/",
+    container: "#subapp-container",
+    activeRule: "/vue3",
   },
   {
-    name: 'vue2App',
-    entry: '//localhost:8082',
-    container: '#subapp-container',
-    activeRule: '/vue2',
+    name: "vue2App",
+    entry: "http://localhost:8082/",
+    container: "#subapp-container",
+    activeRule: "/vue2",
   },
 ];
 

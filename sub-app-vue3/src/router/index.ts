@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { qiankunWindow } from "vite-plugin-qiankun/dist/helper";
 
 // 处理在主应用下的路由
 const getRouterBase = () => {
   // 判断是否运行在qiankun环境中
-  if (window.__POWERED_BY_QIANKUN__) {
-    return '/vue3';
+  if (qiankunWindow.__POWERED_BY_QIANKUN__) {
+    return "/vue3";
   }
   return '/';
 };
