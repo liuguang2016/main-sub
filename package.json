@@ -1,0 +1,22 @@
+{
+  "name": "micro-frontend-demo",
+  "version": "1.0.0",
+  "description": "微前端示例项目：Vue3主应用 + Vue2/Vue3子应用",
+  "private": true,
+  "scripts": {
+    "install:all": "pnpm install",
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "clean": "pnpm -r exec rm -rf node_modules dist"
+  },
+  "engines": {
+    "node": ">=14",
+    "pnpm": ">=7"
+  },
+  "keywords": [
+    "micro-frontend",
+    "qiankun",
+    "vue3",
+    "vue2"
+  ]
+} 

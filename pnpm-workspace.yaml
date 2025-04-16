@@ -1,0 +1,4 @@
+packages:
+  - 'main-app'
+  - 'sub-app-vue3'
+  - 'sub-app-vue2' 
