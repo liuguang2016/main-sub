@@ -1,26 +1,48 @@
 <template>
   <div class="subapp-container">
-    <div id="microAppContainer">
+    <div id="microAppContainer" ref="containerRef">
       <div id="app"></div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'SubappView',
   setup() {
-    onMounted(() => {
-      console.log('[主应用] Subapp组件已挂载，微应用容器已准备就绪');
+    const containerRef = ref<HTMLElement | null>(null);
+    const route = useRoute();
+    
+    // 自定义事件通知容器已准备好
+    const notifyContainerReady = () => {
+      window.dispatchEvent(new CustomEvent('microapp-container-ready', { 
+        detail: { container: containerRef.value } 
+      }));
+    };
+    
+    onMounted(async () => {
+      // 确保DOM已更新
+      await nextTick();
+      
+      if (containerRef.value) {
+        console.log('[主应用] Subapp组件已挂载，微应用容器已准备就绪', route.meta.microApp);
+        // 通知容器已准备就绪
+        notifyContainerReady();
+      } else {
+        console.error('[主应用] Subapp组件已挂载，但容器引用不存在');
+      }
     });
 
     onUnmounted(() => {
       console.log('[主应用] Subapp组件已卸载');
     });
 
-    return {};
+    return {
+      containerRef
+    };
   }
 });
 </script>
