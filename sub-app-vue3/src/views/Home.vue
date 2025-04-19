@@ -1,5 +1,8 @@
 <template>
   <div class="home">
+    <div class="logo-container">
+      <img src="../assets/logo.svg" alt="Vue 3 Logo" class="logo" />
+    </div>
     <h1>{{ t('home.title') }}</h1>
     <p>{{ t('home.description') }}</p>
     <div class="navigation">
@@ -36,6 +39,25 @@ export default defineComponent({
 .home {
   text-align: center;
   padding: 2rem;
+}
+
+.logo-container {
+  margin-bottom: 2rem;
+}
+
+.logo {
+  width: 180px;
+  height: 180px;
+  animation: logo-spin 10s infinite linear;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .navigation {
