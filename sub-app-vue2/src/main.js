@@ -6,7 +6,22 @@ import i18n, { setLang } from "./i18n";
 
 Vue.config.productionTip = false;
 
+// 定义需要暴露给主应用的资源
+const appResources = {
+  // 可以添加Vue2的资源
+  'vue2Logo': 'img/logo.png',
+};
+
 let instance = null;
+
+// 向主应用注册资源的函数
+function registerResources() {
+  if (window.__POWERED_BY_QIANKUN__ && window.registerMicroAppResources) {
+    const baseUrl = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__ || '//localhost:8082';
+    console.log('[Vue2子应用] 向主应用注册资源, baseUrl:', baseUrl);
+    window.registerMicroAppResources('vue2App', baseUrl, appResources);
+  }
+}
 
 // 渲染函数
 function render(props = {}) {
@@ -58,7 +73,9 @@ export async function bootstrap() {
 }
 
 export async function mount(props) {
-  console.log('[vue2] Vue2子应用mounted', props);
+  console.log("[vue2] Vue2子应用mounted", props);
+  // 注册资源
+  registerResources();
   render(props);
 }
 

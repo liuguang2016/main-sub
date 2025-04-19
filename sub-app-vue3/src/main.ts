@@ -5,7 +5,22 @@ import router from './router';
 import { renderWithQiankun, qiankunWindow, QiankunProps } from "vite-plugin-qiankun/dist/helper";
 import i18n, { setLang } from "./i18n";
 
+// 定义需要暴露给主应用的资源
+const appResources = {
+  vue3Logo: "src/assets/logo.svg",
+  // 可以添加更多资源...
+};
+
 let instance: any = null;
+
+// 向主应用注册资源的函数
+function registerResources() {
+  if (window.registerMicroAppResources) {
+    const baseUrl = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__ || '//localhost:8081';
+    console.log('[Vue3子应用] 向主应用注册资源, baseUrl:', baseUrl);
+    window.registerMicroAppResources('vue3App', baseUrl, appResources);
+  }
+}
 
 // 渲染函数
 function render(props: QiankunProps = {}) {
@@ -80,6 +95,8 @@ function render(props: QiankunProps = {}) {
 renderWithQiankun({
   mount(props?: QiankunProps) {
     console.log("[vue3] Vue3子应用mounted", props);
+    // 注册资源
+    registerResources();
     render(props || {});
   },
   bootstrap() {
@@ -100,4 +117,13 @@ renderWithQiankun({
 // 独立运行时
 if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
   render({});
+}
+
+// 为了TypeScript类型定义
+declare global {
+  interface Window {
+    __POWERED_BY_QIANKUN__?: boolean;
+    __INJECTED_PUBLIC_PATH_BY_QIANKUN__?: string;
+    registerMicroAppResources?: (appName: string, baseUrl: string, assets: Record<string, string>) => void;
+  }
 } 

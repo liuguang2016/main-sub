@@ -9,6 +9,12 @@
       </nav>
       <language-switcher />
     </header>
+    
+    <!-- Vue3 Logo展示 - 添加条件渲染 -->
+    <div class="micro-app-logo-container" v-if="hasVue3Logo">
+      <micro-app-resource app-name="vue3App" resource-key="vue3Logo" width="80px" height="80px" />
+    </div>
+    
     <main class="main">
       <router-view v-slot="{ Component }">
         <keep-alive>
@@ -23,20 +29,62 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import LanguageSwitcher from './LanguageSwitcher.vue';
+import MicroAppResource from './MicroAppResource.vue';
+import { hasMicroAppResource } from '../resource-registry';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'LayoutComponent',
   components: {
-    LanguageSwitcher
+    LanguageSwitcher,
+    MicroAppResource
   },
   setup() {
     const { t } = useI18n();
+    const route = useRoute();
+    const hasVue3Logo = ref(false);
+    
+    // 检查Vue3 Logo资源是否可用
+    const checkVue3Logo = () => {
+      hasVue3Logo.value = hasMicroAppResource('vue3App', 'vue3Logo');
+      console.log('[主应用] 检查Vue3 Logo资源:', hasVue3Logo.value ? '可用' : '不可用');
+    };
+    
+    // 监听路由变化，检查资源
+    watch(() => route.path, (newPath) => {
+      if (newPath.startsWith('/vue3')) {
+        // 给Vue3子应用一点加载时间
+        setTimeout(checkVue3Logo, 500);
+      }
+    });
+    
+    // 监听资源更新事件
+    const handleResourcesUpdated = (event: CustomEvent) => {
+      if (event.detail?.appName === 'vue3App') {
+        checkVue3Logo();
+      }
+    };
+    
+    onMounted(() => {
+      // 初始检查
+      checkVue3Logo();
+      
+      // 监听资源更新事件
+      window.addEventListener('micro-app-resources-updated', 
+        handleResourcesUpdated as EventListener);
+      
+      return () => {
+        window.removeEventListener('micro-app-resources-updated', 
+          handleResourcesUpdated as EventListener);
+      };
+    });
     
     return {
-      t
+      t,
+      hasVue3Logo
     };
   }
 });
@@ -79,6 +127,24 @@ export default defineComponent({
 .nav-link:hover,
 .nav-link.router-link-active {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+.micro-app-logo-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 .main {

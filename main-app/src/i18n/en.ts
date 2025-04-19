@@ -23,4 +23,14 @@ export default {
   footer: {
     copyright: "Micro-Frontend Demo © {year}",
   },
+  resources: {
+    title: "Micro-App Resources",
+    loading: "Loading micro-app resources...",
+    empty: "No micro-app resources available, please load sub-apps first",
+    selected: "Selected Resource",
+    app: "Source App",
+    key: "Resource Key",
+    url: "Resource URL",
+    loadError: "Resource loading failed",
+  },
 };

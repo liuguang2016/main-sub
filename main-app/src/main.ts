@@ -7,6 +7,10 @@ import { initGlobalState } from "qiankun";
 import { initQiankun } from "./micro-app";
 import { getLang } from "./i18n";
 import { setMicroActions } from "./micro-app-manager";
+import { registerMicroAppResources } from "./resource-registry";
+
+// 将资源注册函数挂载到全局，供微应用调用
+window.registerMicroAppResources = registerMicroAppResources;
 
 // 创建Vue应用实例
 const app = createApp(App);

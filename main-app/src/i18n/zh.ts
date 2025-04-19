@@ -23,4 +23,14 @@ export default {
   footer: {
     copyright: "微前端示例 © {year}",
   },
+  resources: {
+    title: "微应用资源展示",
+    loading: "正在加载微应用资源...",
+    empty: "暂无微应用资源，请先加载子应用",
+    selected: "已选择资源",
+    app: "来源应用",
+    key: "资源键名",
+    url: "资源地址",
+    loadError: "资源加载失败",
+  },
 };
