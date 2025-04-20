@@ -9,17 +9,16 @@
       @error="handleImageError"
     />
     <div v-else-if="error" class="resource-error">
-      {{ t('resources.loadError') }}
+      {{ $t('resources.loadError') }}
     </div>
     <div v-else-if="loading" class="resource-loading">
-      {{ t('resources.loading') }}
+      {{ $t('resources.loading') }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch, onMounted } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { getMicroAppResource, hasMicroAppResource } from '../resource-registry';
 
 export default defineComponent({
@@ -43,7 +42,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { t } = useI18n();
     const error = ref(false);
     const loading = ref(false); // 默认不显示加载状态
     const resourceUrl = ref('');
@@ -98,7 +96,6 @@ export default defineComponent({
     }));
     
     return {
-      t,
       error,
       loading,
       resourceUrl,
