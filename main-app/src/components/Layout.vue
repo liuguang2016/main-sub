@@ -1,11 +1,11 @@
 <template>
   <div class="layout">
     <header class="header">
-      <h1 class="logo">{{ t('home.welcome') }}</h1>
+      <h1 class="logo">{{ $t('home.welcome') }}</h1>
       <nav class="nav">
-        <router-link to="/" class="nav-link">{{ t('nav.home') }}</router-link>
-        <router-link to="/vue3" class="nav-link">{{ t('nav.vue3App') }}</router-link>
-        <router-link to="/vue2" class="nav-link">{{ t('nav.vue2App') }}</router-link>
+        <router-link to="/" class="nav-link">{{ $t('nav.home') }}</router-link>
+        <router-link to="/vue3" class="nav-link">{{ $t('nav.vue3App') }}</router-link>
+        <router-link to="/vue2" class="nav-link">{{ $t('nav.vue2App') }}</router-link>
       </nav>
       <language-switcher />
     </header>
@@ -23,18 +23,19 @@
       </router-view>
     </main>
     <footer class="footer">
-      <p>{{ t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
+      <p>{{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
     </footer>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue';
+import { defineComponent, ref, onMounted, watch, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 import LanguageSwitcher from './LanguageSwitcher.vue';
 import MicroAppResource from './MicroAppResource.vue';
 import { hasMicroAppResource } from '../resource-registry';
 import { useRoute } from 'vue-router';
+import { MicroAppStateActions } from 'qiankun';
 
 export default defineComponent({
   name: 'LayoutComponent',
@@ -47,6 +48,33 @@ export default defineComponent({
     const route = useRoute();
     const hasVue3Logo = ref(false);
     
+    // 注入全局状态操作对象
+    const actions = inject<MicroAppStateActions>('qiankunGlobalActions');
+    
+    // Vue3子应用的路由配置描述 - 只包含路径和名称，组件在子应用中加载
+    const vue3RoutesConfig = [
+      {
+        path: '/',
+        name: 'Home',
+        componentName: 'Home'
+      },
+      {
+        path: '/about',
+        name: 'About',
+        componentName: 'About'
+      }
+    ];
+    
+    // 初始化：通过全局状态发送路由配置给Vue3子应用
+    const initVue3Routes = () => {
+      if (actions) {
+        console.log('[主应用Layout] 向Vue3子应用发送路由配置');
+        actions.setGlobalState({ vue3RoutesConfig });
+      } else {
+        console.error('[主应用Layout] 无法获取全局状态actions对象');
+      }
+    };
+    
     // 检查Vue3 Logo资源是否可用
     const checkVue3Logo = () => {
       hasVue3Logo.value = hasMicroAppResource('vue3App', 'vue3Logo');
@@ -56,8 +84,11 @@ export default defineComponent({
     // 监听路由变化，检查资源
     watch(() => route.path, (newPath) => {
       if (newPath.startsWith('/vue3')) {
-        // 给Vue3子应用一点加载时间
+        // 给Vue3子应用一点加载时间，然后再检查资源
         setTimeout(checkVue3Logo, 500);
+        
+        // 同时确保路由配置已发送
+        initVue3Routes();
       }
     });
     
@@ -71,6 +102,9 @@ export default defineComponent({
     onMounted(() => {
       // 初始检查
       checkVue3Logo();
+      
+      // 初始化Vue3子应用路由配置
+      initVue3Routes();
       
       // 监听资源更新事件
       window.addEventListener('micro-app-resources-updated', 

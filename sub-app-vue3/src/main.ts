@@ -1,9 +1,10 @@
 import './public-path';
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router';
+import router, { registerRoutes } from "./router";
 import { renderWithQiankun, qiankunWindow, QiankunProps } from "vite-plugin-qiankun/dist/helper";
 import i18n, { setLang } from "./i18n";
+import { RouteRecordRaw } from "vue-router";
 
 // 定义需要暴露给主应用的资源
 const appResources = {
@@ -16,16 +17,16 @@ let instance: any = null;
 // 向主应用注册资源的函数
 function registerResources() {
   if (window.registerMicroAppResources) {
-    const baseUrl = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__ || '//localhost:8081';
-    console.log('[Vue3子应用] 向主应用注册资源, baseUrl:', baseUrl);
-    window.registerMicroAppResources('vue3App', baseUrl, appResources);
+    const baseUrl = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__ || "//localhost:8081";
+    console.log("[Vue3子应用] 向主应用注册资源, baseUrl:", baseUrl);
+    window.registerMicroAppResources("vue3App", baseUrl, appResources);
   }
 }
 
 // 渲染函数
 function render(props: QiankunProps = {}) {
   const { container, actions } = props;
-  
+
   console.log("[Vue3子应用] 接收到props:", props);
   console.log("[Vue3子应用] actions对象:", actions);
 
@@ -67,6 +68,13 @@ function render(props: QiankunProps = {}) {
             detail: { lang: state.lang },
           })
         );
+      }
+
+      // 处理路由配置变更
+      if (state.vue3RoutesConfig) {
+        console.log("[Vue3子应用] 接收到路由配置:", state.vue3RoutesConfig);
+        // 注册动态路由
+        registerRoutes(state.vue3RoutesConfig);
       }
     }, true); // true表示立即触发一次回调
   }
