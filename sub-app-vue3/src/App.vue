@@ -1,23 +1,39 @@
 <template>
   <div class="app-container">
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component, route }">
       <keep-alive>
-        <component :is="Component" :key="currentLang" />
+        <component
+          :is="Component"
+          :key="route.path"
+          v-if="Component && route.meta.keepAlive !== false"
+        />
       </keep-alive>
+      <component
+        :is="Component"
+        :key="route.path + refreshKey"
+        v-if="Component && route.meta.keepAlive === false"
+      />
     </router-view>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { defineComponent, computed, ref, onMounted, onUnmounted, watch, provide } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter, useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'App',
   setup() {
     const { locale } = useI18n();
+    const router = useRouter();
+    const route = useRoute();
     const currentLang = computed(() => locale.value);
     const refreshKey = ref(0);
+    
+    // 提供路由实例给子组件
+    provide('appRouter', router);
+    provide('appRoute', route);
 
     // 监听子应用内部的语言变化事件
     const handleLanguageChange = (event: CustomEvent) => {
@@ -39,6 +55,11 @@ export default defineComponent({
       watch(locale, (newValue) => {
         console.log('[Vue3子应用App] i18n locale变化:', newValue);
         handleQiankunLangChange();
+      });
+      
+      // 监听路由错误
+      router.onError((error) => {
+        console.error('[Vue3子应用App] 路由错误:', error);
       });
     });
 

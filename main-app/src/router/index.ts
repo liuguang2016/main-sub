@@ -26,18 +26,12 @@ const routes: Array<RouteRecordRaw> = [
           }
         ]
       },
+      // Vue3应用使用通配符匹配，不使用子路由嵌套
       {
-        path: "/vue3",
+        path: "/vue3/:pathMatch(.*)*",
         name: "vue3",
         component: () => import("../views/Subapp.vue"),
         meta: { microApp: "vue3App" },
-        children: [
-          {
-            path: ":pathMatch(.*)*",
-            name: "vue3-sub-routes",
-            component: { render: () => null },
-          }
-        ]
       },
     ],
   },

@@ -54,7 +54,11 @@ export function generateRoutes(routeConfig: Array<RouteConfigItem>): Array<Route
       path: item.path,
       name: item.name,
       component,
-      ...(item.meta ? { meta: item.meta } : {}),
+      // 添加额外的元数据，确保正确的生命周期处理
+      meta: {
+        ...item.meta,
+        keepAlive: true, // 默认启用组件缓存
+      },
     };
 
     return route;
@@ -65,40 +69,26 @@ export function generateRoutes(routeConfig: Array<RouteConfigItem>): Array<Route
 export function registerRoutes(routeConfig: Array<RouteConfigItem>) {
   console.log("[Vue3子应用] 注册动态路由:", routeConfig);
 
-  // 生成路由配置
-  const generatedRoutes = generateRoutes(routeConfig);
+  try {
+    // 生成路由配置
+    const generatedRoutes = generateRoutes(routeConfig);
 
-  // 清除所有现有路由
-  router.getRoutes().forEach((route) => {
-    if (route.name) {
-      router.removeRoute(route.name);
-    }
-  });
+    // 清除所有现有路由
+    router.getRoutes().forEach((route) => {
+      if (route.name) {
+        router.removeRoute(route.name);
+      }
+    });
 
-  // 添加新路由
-  generatedRoutes.forEach((route) => {
-    router.addRoute(route);
-  });
+    // 添加新路由
+    generatedRoutes.forEach((route) => {
+      router.addRoute(route);
+    });
 
-  console.log("[Vue3子应用] 路由注册完成，当前路由:", router.getRoutes());
-}
-
-// 独立运行时，添加默认路由
-if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
-  const defaultRoutes: RouteConfigItem[] = [
-    {
-      path: "/",
-      name: "Home",
-      componentName: "Home",
-    },
-    {
-      path: "/about",
-      name: "About",
-      componentName: "About",
-    },
-  ];
-
-  registerRoutes(defaultRoutes);
+    console.log("[Vue3子应用] 路由注册完成，当前路由:", router.getRoutes());
+  } catch (err) {
+    console.error("[Vue3子应用] 路由注册失败:", err);
+  }
 }
 
 export default router; 
