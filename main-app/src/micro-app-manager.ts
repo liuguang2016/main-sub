@@ -51,16 +51,19 @@ export function setupMicroAppRouteGuards(router: Router) {
   router.beforeEach(async (to, from, next) => {
     // 获取当前路由的微应用名称
     const toMicroApp = to.meta.microApp as string | undefined;
-
-    // 如果当前有激活的微应用，需要先卸载
-    if (currentMicroApp) {
+    
+    // 判断是否是微应用内部路由变化
+    const isSameMicroApp = currentMicroApp === toMicroApp;
+    
+    // 只有当不是同一个微应用时，才进行卸载操作
+    if (currentMicroApp && !isSameMicroApp) {
       await unloadApp(currentMicroApp);
       currentMicroApp = null;
       console.log("[主应用] 已卸载当前微应用");
     }
 
-    // 如果目标路由需要加载微应用
-    if (toMicroApp) {
+    // 如果目标路由需要加载微应用且不是当前已加载的微应用
+    if (toMicroApp && !isSameMicroApp) {
       // 确保组件已挂载并且容器已存在
       next();
 

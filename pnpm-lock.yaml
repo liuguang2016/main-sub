@@ -26,6 +26,9 @@ importers:
       '@types/node':
         specifier: ^20.6.0
         version: 20.17.30
+      '@types/vue-i18n':
+        specifier: ^7.0.0
+        version: 7.0.0(vue@3.5.13(typescript@5.8.3))
       '@vitejs/plugin-vue':
         specifier: ^4.3.4
         version: 4.6.2(vite@4.5.13(@types/node@20.17.30)(terser@5.39.0))(vue@3.5.13(typescript@5.8.3))
@@ -97,6 +100,9 @@ importers:
       '@types/node':
         specifier: ^20.6.0
         version: 20.17.30
+      '@types/vue-i18n':
+        specifier: ^7.0.0
+        version: 7.0.0(vue@3.5.13(typescript@5.8.3))
       '@vitejs/plugin-vue':
         specifier: ^4.3.4
         version: 4.6.2(vite@4.5.13(@types/node@20.17.30)(terser@5.39.0))(vue@3.5.13(typescript@5.8.3))
@@ -976,6 +982,10 @@ packages:
 
   '@types/sockjs@0.3.36':
     resolution: {integrity: sha512-MK9V6NzAS1+Ud7JV9lJLFqW85VbC9dq3LmwZCuBe4wBDgKC0Kj/jd8Xl+nSviU+Qc3+m7umHHyHg//2KSa0a0Q==}
+
+  '@types/vue-i18n@7.0.0':
+    resolution: {integrity: sha512-4e3EvN4k+B6eTq1qWDFW1wpzCgz+8nNCn6LAQTkcRoGJx9rVO5iYzyEogFTi9RwBJ588+Rx0nUwRFjKUYPe/BQ==}
+    deprecated: This is a stub types definition for vue-i18n (https://github.com/kazupon/vue-i18n). vue-i18n provides its own type definitions, so you don't need @types/vue-i18n installed!
 
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
@@ -5161,6 +5171,12 @@ snapshots:
   '@types/sockjs@0.3.36':
     dependencies:
       '@types/node': 20.17.30
+
+  '@types/vue-i18n@7.0.0(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      vue-i18n: 9.14.4(vue@3.5.13(typescript@5.8.3))
+    transitivePeerDependencies:
+      - vue
 
   '@types/ws@8.18.1':
     dependencies:

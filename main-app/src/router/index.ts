@@ -14,16 +14,30 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("../views/Home.vue"),
       },
       {
-        path: "/vue2/:pathMatch(.*)*",
+        path: "/vue2",
         name: "vue2",
         component: () => import("../views/Subapp.vue"),
         meta: { microApp: "vue2App" },
+        children: [
+          {
+            path: ":pathMatch(.*)*",
+            name: "vue2-sub-routes",
+            component: { render: () => null },
+          }
+        ]
       },
       {
-        path: "/vue3/:pathMatch(.*)*",
+        path: "/vue3",
         name: "vue3",
         component: () => import("../views/Subapp.vue"),
         meta: { microApp: "vue3App" },
+        children: [
+          {
+            path: ":pathMatch(.*)*",
+            name: "vue3-sub-routes",
+            component: { render: () => null },
+          }
+        ]
       },
     ],
   },

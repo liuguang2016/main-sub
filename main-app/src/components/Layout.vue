@@ -81,17 +81,6 @@ export default defineComponent({
       console.log('[主应用] 检查Vue3 Logo资源:', hasVue3Logo.value ? '可用' : '不可用');
     };
     
-    // 监听路由变化，检查资源
-    watch(() => route.path, (newPath) => {
-      if (newPath.startsWith('/vue3')) {
-        // 给Vue3子应用一点加载时间，然后再检查资源
-        setTimeout(checkVue3Logo, 500);
-        
-        // 同时确保路由配置已发送
-        initVue3Routes();
-      }
-    });
-    
     // 监听资源更新事件
     const handleResourcesUpdated = (event: CustomEvent) => {
       if (event.detail?.appName === 'vue3App') {
